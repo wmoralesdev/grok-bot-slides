@@ -1,13 +1,20 @@
 import type { Deck } from "../types";
-import { OpsWelcomeSlide } from "./OpsWelcomeSlide";
-import { ProcessMapSlide } from "./ProcessMapSlide";
-import { ProcessExerciseSlide } from "./ProcessExerciseSlide";
+import {
+  OpsWelcomeSlide,
+  SpeakerSlide,
+  ProblemSlide,
+  CalendarSlide,
+  SourcesSlide,
+  WeekSlide,
+  ExecutionSlide,
+  CloseSlide,
+} from "./OpsSlides";
 
 export const opsDeck: Deck = {
   slug: "grok-bot-for-ops",
   title: "Grok Bot for Ops",
   description:
-    "Plantilla para documentar procesos, revisar tareas repetitivas y probar una mejora con Grok Bot.",
+    "De muchas fuentes a una semana comprometida: el bot propone, tú confirmas y ejecutas el día.",
   category: "Ops",
   duration: "15 min",
   accent: "#00b9aa",
@@ -15,90 +22,189 @@ export const opsDeck: Deck = {
     {
       slug: "bienvenida",
       title: "Grok Bot for Ops",
-      kicker: "Bienvenida · Plantilla",
+      kicker: "Introducción · 1:00",
       component: OpsWelcomeSlide,
       guide: {
         intro:
-          "Esta plantilla propone empezar por una tarea operativa pequeña. Vamos a describir cómo funciona y preparar una mejora que podamos comprobar.",
+          "Vamos a recorrer cómo uso Grok Bot para pasar de muchas fuentes a una semana comprometida, y después ejecutarla. El bot propone. Yo confirmo. El día se tacha.",
         sections: [
           {
-            title: "Trae una rutina",
-            body: "Puede ser preparar un reporte, recibir una solicitud o revisar una entrega. Elige algo cuyo inicio y final puedas explicar.",
+            title: "Qué nos vamos a llevar",
+            body: "Un solo lugar para mirar si el tiempo ya está ocupado, una forma de conectar las fuentes y una lista del día que no compite con el calendar.",
           },
         ],
         takeaway:
           "Explora a tu ritmo. Usa «Ir al presentador» para volver a la slide en vivo.",
       },
       question: {
-        id: "ops-recurring-task",
-        prompt: "¿Tienes una tarea que repites cada semana?",
+        id: "ops-donde-organizas",
+        prompt: "¿Con qué organizas tu tiempo hoy?",
         type: "poll",
         options: [
-          { id: "yes", label: "Sí, ya tengo una en mente" },
-          { id: "not-yet", label: "Todavía no identifico una" },
+          { id: "calendar", label: "Calendario" },
+          { id: "lista", label: "Lista de tareas" },
+          { id: "cabeza", label: "La cabeza o notas" },
+          { id: "varias", label: "Varias a la vez" },
         ],
       },
     },
     {
-      slug: "mapear-el-proceso",
-      title: "Del paso repetido al proceso claro",
-      kicker: "Entrada · Decisión · Salida",
-      component: ProcessMapSlide,
+      slug: "saul-calderon",
+      title: "Saul Calderon",
+      kicker: "Sobre mí · 0:30",
+      component: SpeakerSlide,
       guide: {
         intro:
-          "Describe el proceso actual antes de pedir una automatización. Un mapa sencillo permite encontrar pasos ambiguos y revisar la propuesta del bot.",
+          "Soy Saul Calderon: AI Product Engineer y SpaceXAI Ambassador.",
         sections: [
           {
-            title: "Entrada",
-            body: "Anota qué dispara la tarea, qué información llega y dónde encuentras los datos que faltan.",
-          },
-          {
-            title: "Decisión",
-            body: "Explica las reglas que sigues, las excepciones conocidas y la persona que puede resolver cada duda.",
-          },
-          {
-            title: "Salida",
-            body: "Define la entrega, quién la recibe y qué revisión necesita. Incluye una señal concreta de que la tarea terminó.",
+            title: "Por qué esta charla",
+            body: "Les voy a contar el sistema con el que organizo mi semana, en lo personal y en lo profesional. La plantilla se puede llevar a un ticket, a un reporte o a la lista del día.",
           },
         ],
-        takeaway:
-          "Plantilla: cuando llega [entrada], hacemos [pasos], revisamos [reglas] y entregamos [salida].",
+        takeaway: "Una forma de trabajar, contada a través de una semana.",
       },
     },
     {
-      slug: "mejorar-un-paso",
-      title: "Mejora un paso",
-      kicker: "Ejercicio · 5 minutos",
-      component: ProcessExerciseSlide,
+      slug: "el-plan-no-alcanza",
+      title: "Nos perdemos en el plan",
+      kicker: "El problema · 1:30",
+      component: ProblemSlide,
       guide: {
         intro:
-          "Usa un ejemplo ficticio o anonimizado de tu rutina. Pide al bot una checklist que otra persona pueda seguir sin contexto adicional.",
+          "El problema no es solo tener muchas fuentes. Es perderse planificando y no ejecutar. Un calendar lleno da la sensación de orden. No es el resultado.",
         sections: [
           {
-            title: "Describe",
-            body: "Escribe el inicio, los pasos y la entrega. Señala dónde suele aparecer una demora, una duda o un error.",
+            title: "Planificar",
+            body: "Reuniones, entregas y cuentas entran por todos lados. Anotarlas no alcanza si esa semana no se cumple.",
           },
           {
-            title: "Prepara",
-            body: "Pide una checklist breve con responsables y criterios de revisión. Ajusta cualquier supuesto que no corresponda a tu proceso.",
-          },
-          {
-            title: "Comprueba",
-            body: "Recorre un caso habitual y otro con información incompleta. Anota qué debe resolverse antes de usar la checklist en una tarea real.",
+            title: "Ejecutar",
+            body: "Ejecutar pide un horario ya comprometido y una lista que se pueda tachar. Ahí entra Grok Bot: ayuda a cerrar el cuándo para que el día se pueda hacer.",
           },
         ],
         takeaway:
-          "Entrega del ejercicio: una checklist y una excepción que ya sabes cómo manejar.",
+          "El resultado es lo que hiciste, no lo que anotaste.",
+      },
+    },
+    {
+      slug: "google-calendar",
+      title: "Un solo lugar para el tiempo",
+      kicker: "El cuándo · 2:00",
+      component: CalendarSlide,
+      guide: {
+        intro:
+          "Yo uso Google Calendar para saber si ese tiempo ya está ocupado. Recomiendo ese calendar y conectarlo con el plugin de Grok Bot.",
+        sections: [
+          {
+            title: "Cómo se conecta",
+            body: "En Grok Bot: Marketplace, elige el plugin, Add, conecta la cuenta de Google y pruébalo desde el chat con @. Esa ruta está documentada para plugins.",
+          },
+          {
+            title: "Quién escribe",
+            body: "El bot lee el calendar, propone bloques y señala choques. Nada queda comprometido hasta que yo confirmo. Si más adelante la lista no coincide, gana el calendar.",
+          },
+        ],
+        takeaway:
+          "Un solo lugar responde si ese tiempo ya está tomado.",
+      },
+    },
+    {
+      slug: "fuentes-plugin-mcp",
+      title: "De dónde entra el trabajo",
+      kicker: "Las entradas · 2:00",
+      component: SourcesSlide,
+      guide: {
+        intro:
+          "El trabajo entra de tres maneras: una reunión que ya tiene hora, una entrega que todavía no está en el calendar, y un admin que se repite. Las capturas son mías: Wispr por MCP y Moodle con el bot en mi máquina.",
+        sections: [
+          {
+            title: "Wispr Flow",
+            body: "No tenía plugin. Le pedí a Grok Bot que conectara el MCP, autenticé, y el bot ya pudo leer transcripciones. En el trabajo eso es la nota de la reunión.",
+          },
+          {
+            title: "Universidad",
+            body: "Moodle lo abre el bot en el navegador de mi máquina. Le pregunto qué sigue después de una actividad y me lista entregas y fechas. En el trabajo eso es un ticket o un reporte.",
+          },
+        ],
+        takeaway:
+          "Plugin si existe. Si no, MCP. Si vive en una web, el bot puede entrar desde tu máquina.",
+      },
+    },
+    {
+      slug: "una-semana",
+      title: "Así se ve una semana",
+      kicker: "Una semana · 4:00",
+      component: WeekSlide,
+      guide: {
+        intro:
+          "Le pedí al bot cómo se veía mi agenda. Juntó los calendarios, aplicó mis filtros y me armó una tabla. La captura es una semana real.",
+        sections: [
+          {
+            title: "Qué entra en la misma semana",
+            body: "Un meetup, una entrega de la universidad, el gym, el stand-up, pagar la tarjeta y reuniones de trabajo. Personal, universidad y gym conviven en la misma vista.",
+          },
+          {
+            title: "Qué hace el bot",
+            body: "No te tira todos los calendarios crudos. Filtra, omite lo que pediste ocultar y te deja una tabla para confirmar. Si algo no va, lo sacas.",
+          },
+        ],
+        takeaway:
+          "Pide la semana. El bot la ordena. Tú confirmas.",
+      },
+    },
+    {
+      slug: "mas-que-el-calendar",
+      title: "Si necesitas más que el calendario",
+      kicker: "El día · 2:00",
+      component: ExecutionSlide,
+      guide: {
+        intro:
+          "El calendario organiza el cuándo. No es una buena lista del día. Para tachar el día, usa TickTick —o una tool propia— desde Grok Bot.",
+        sections: [
+          {
+            title: "TickTick",
+            body: "La captura es del producto: lista y horario juntos. En Grok Bot entra por MCP: pídele al bot que te ayude a enlazarlo, como con Wispr. Si no te sirve, pídele una tool que reciba la semana confirmada.",
+          },
+          {
+            title: "Por qué Grok Bot",
+            body: "Grok Bot no es un chat lineal, como ChatGPT o un cloud agent. Es un grupo: cada agente llega con su contexto y se organizan entre ellos.",
+          },
+        ],
+        takeaway:
+          "Usa Grok Bot para conectar la lista. El grupo sostiene el contexto. El calendario sigue ganando el cuándo.",
+      },
+    },
+    {
+      slug: "la-semana-hecha",
+      title: "El plan no cuenta. La semana hecha sí",
+      kicker: "El cierre · 2:00",
+      component: CloseSlide,
+      guide: {
+        intro:
+          "El plan no cuenta. La semana hecha sí. Grok Bot nos ayuda con la automatización y el plan. Nos deja más tiempo para ejecutar.",
+        sections: [
+          {
+            title: "Calendar",
+            body: "El único lugar donde miras si ese tiempo ya está ocupado.",
+          },
+          {
+            title: "La lista",
+            body: "Lo que vas a hacer hoy, cuando el horario ya está confirmado.",
+          },
+        ],
+        takeaway:
+          "Grok Bot arma el plan. El tiempo extra es para ejecutar.",
       },
       question: {
-        id: "ops-first-improvement",
-        prompt: "¿Qué mejoraría más tu proceso?",
+        id: "ops-que-falta",
+        prompt: "¿Qué te falta más esta semana?",
         type: "single",
         options: [
-          { id: "inputs", label: "Recibir mejor la información" },
-          { id: "steps", label: "Aclarar los pasos" },
-          { id: "exceptions", label: "Resolver excepciones" },
-          { id: "review", label: "Revisar la entrega" },
+          { id: "calendar", label: "Un calendar" },
+          { id: "ejecutar", label: "Ejecutar lo que ya anoté" },
+          { id: "ambas", label: "Las dos" },
+          { id: "nose", label: "No sé" },
         ],
       },
     },
