@@ -1,5 +1,5 @@
-// Static React adapter around the MIT-licensed bloub geometry. See ./LICENSE.
-import { EXPRESSION_BY_ID } from "./expressions";
+// React adapter around the MIT-licensed bloub geometry. See ./LICENSE.
+import { EXPRESSION_BY_ID, type BotExpression } from "./expressions";
 import { eyePoses } from "./face";
 import {
   capsulePath,
@@ -69,9 +69,9 @@ function capsuleEdge(width: number, height: number) {
 }
 
 /**
- * Static counterpart of the original eyefit correction: translate the pair together.
- * There is no animation or per-frame fitting. Keeping a common translation preserves
- * the original eye separation, capsule sizes and spherical perspective.
+ * Fit a projected pose by translating the eye pair together. The same correction
+ * serves static and interpolated poses, preserving the original eye separation,
+ * capsule sizes and spherical perspective.
  */
 function fitEyes(eyes: Eye[], radii: number[]) {
   if (!eyes.length) return;
@@ -104,22 +104,27 @@ function fitEyes(eyes: Eye[], radii: number[]) {
   }
 }
 
-export function createBotGeometry(
-  shape: BotShape = "round",
-  expression = "neutral",
-  seed = 0,
-) {
-  const radii = shapes[shape] ?? shapes.round;
+export function resolveBotExpression(expression = "neutral"): BotExpression {
   const face =
     EXPRESSION_BY_ID.get(expressionAliases[expression] ?? expression) ??
     EXPRESSION_BY_ID.get("neutre")!;
-  const safeSeed = Number.isFinite(seed) ? seed : 0;
-  const seedOffset = Math.sin(safeSeed * 12.9898) * 4;
   // The slides' reference art uses a centered, larger face. Retain bloub's
   // spherical projection, while art-directing its neutral pose for this deck.
-  const baseGaze =
-    face.id === "neutre" ? { yaw: 0, pitch: 0, roll: -12 } : face.gaze;
-  const gaze = { ...baseGaze, yaw: baseGaze.yaw + seedOffset };
+  return face.id === "neutre"
+    ? { ...face, gaze: { yaw: 0, pitch: 0, roll: -12 } }
+    : face;
+}
+
+/** Shared projection for static poses and smoothly interpolated expressions. */
+export function createBotEyeGeometry(
+  shape: BotShape,
+  face: BotExpression,
+  seed = 0,
+) {
+  const radii = shapes[shape] ?? shapes.round;
+  const safeSeed = Number.isFinite(seed) ? seed : 0;
+  const seedOffset = Math.sin(safeSeed * 12.9898) * 4;
+  const gaze = { ...face.gaze, yaw: face.gaze.yaw + seedOffset };
   const eyeScale = 1.3;
   const eyes: Eye[] = eyePoses(gaze, 100, face.split).flatMap((pose, index) => {
     if (pose.depth <= 0.02) return [];
@@ -145,13 +150,22 @@ export function createBotGeometry(
     ];
   });
   fitEyes(eyes, radii);
+  return eyes.map((eye) => ({
+    d: eye.d,
+    transform: `matrix(${eye.matrix.map(r2).join(" ")})`,
+  }));
+}
+
+export function createBotGeometry(
+  shape: BotShape = "round",
+  expression = "neutral",
+  seed = 0,
+) {
+  const radii = shapes[shape] ?? shapes.round;
   return {
     body: closedPath(
       toPoints({ radii, rot: 0, cx: 0, cy: 0, sx: 1, sy: 1 }, 100),
     ),
-    eyes: eyes.map((eye) => ({
-      d: eye.d,
-      transform: `matrix(${eye.matrix.map(r2).join(" ")})`,
-    })),
+    eyes: createBotEyeGeometry(shape, resolveBotExpression(expression), seed),
   };
 }

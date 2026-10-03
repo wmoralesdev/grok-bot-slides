@@ -169,9 +169,15 @@ export function SpeakerSlide() {
           <strong>AI Product Engineer</strong>
         </p>
       </div>
-      <div className="eng-speaker-mark" aria-hidden="true">
-        WM<span>↗</span>
-      </div>
+      <img
+        className="eng-speaker-portrait"
+        src={`${import.meta.env.BASE_URL}speakers/walter-morales.png`}
+        alt="Retrato de Walter Morales"
+        width={744}
+        height={971}
+        decoding="async"
+        draggable={false}
+      />
     </Frame>
   );
 }

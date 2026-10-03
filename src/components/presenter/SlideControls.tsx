@@ -6,6 +6,8 @@ import {
   QrCode,
   Sun,
   Moon,
+  Pause,
+  Play,
 } from "@phosphor-icons/react";
 import type { SlideTheme } from "./useSlideTheme";
 
@@ -18,6 +20,10 @@ type SlideControlsProps = {
   focusMode: boolean;
   isLive: boolean;
   theme: SlideTheme;
+  ambientMotion?: boolean;
+  motionPaused: boolean;
+  reducedMotion: boolean;
+  onToggleMotion: () => void;
   onToggleTheme: () => void;
   onMove: (index: number) => void;
   onFullscreen: () => void;
@@ -33,11 +39,20 @@ export function SlideControls({
   focusMode,
   isLive,
   theme,
+  ambientMotion,
+  motionPaused,
+  reducedMotion,
+  onToggleMotion,
   onToggleTheme,
   onMove,
   onFullscreen,
   onShare,
 }: SlideControlsProps) {
+  const motionLabel = reducedMotion
+    ? "Movimiento reducido activado"
+    : motionPaused
+      ? "Reanudar animación"
+      : "Pausar animación";
   return (
     <div className="slide-controlbar">
       <span className="slide-position">
@@ -63,6 +78,22 @@ export function SlideControls({
           <CaretRight size={20} />
         </button>
         <span className="control-divider" />
+        {ambientMotion && (
+          <button
+            className="icon-button"
+            aria-label={motionLabel}
+            aria-pressed={motionPaused || reducedMotion}
+            title={reducedMotion
+              ? "Animación desactivada por tu preferencia de movimiento reducido"
+              : motionLabel}
+            disabled={reducedMotion}
+            onClick={onToggleMotion}
+          >
+            {motionPaused || reducedMotion
+              ? <Play size={20} />
+              : <Pause size={20} />}
+          </button>
+        )}
         <button
           className="icon-button"
           aria-label="Modo claro de las slides"

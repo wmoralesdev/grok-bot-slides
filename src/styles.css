@@ -1071,6 +1071,17 @@ code {
   gap: 40px;
   padding: 30px 0;
 }
+.presenter-details.standalone-details {
+  grid-template-columns: minmax(0, 1fr);
+}
+.standalone-details .speaker-notes {
+  max-width: 76ch;
+}
+.speaker-guide-section h3 {
+  margin: 20px 0 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
 .speaker-notes h2 {
   font-size: 17px;
   letter-spacing: -0.3px;

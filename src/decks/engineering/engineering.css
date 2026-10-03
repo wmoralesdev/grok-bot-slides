@@ -135,21 +135,15 @@
   color: var(--slide-fg);
   font-size: 1.8cqw;
 }
-.eng-speaker-mark {
+.eng-speaker-portrait {
   position: absolute;
   right: 0;
-  bottom: 3cqw;
-  font-size: 14cqw;
-  line-height: 1;
-  letter-spacing: -0.12em;
-  color: var(--slide-muted);
-}
-.eng-speaker-mark > span {
+  bottom: 1.8cqw;
   display: block;
-  color: var(--slide-orange);
-  text-align: right;
-  font-size: 8cqw;
-  margin-bottom: 0.5cqw;
+  width: 29cqw;
+  height: 39cqw;
+  object-fit: contain;
+  object-position: center bottom;
 }
 .eng-lifecycle {
   padding-top: 2.8cqw;

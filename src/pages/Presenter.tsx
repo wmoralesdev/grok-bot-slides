@@ -3,6 +3,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { Users } from "@phosphor-icons/react";
 import { deckRoute, presenterRoute } from "../router";
 import { findDeck, type Deck } from "../decks";
+import { slideMetadata } from "../decks/metadata";
 import { ConnectionNotice } from "../components/Shell";
 import { ShareModal } from "../components/ShareModal";
 import { PresenterHeader } from "../components/presenter/PresenterHeader";
@@ -12,6 +13,7 @@ import { PresenterDetails } from "../components/presenter/PresenterDetails";
 import { EndSessionModal } from "../components/presenter/EndSessionModal";
 import { ProjectedQuestion } from "../components/presenter/ProjectedQuestion";
 import { useSlideTheme } from "../components/presenter/useSlideTheme";
+import { useAmbientMotion } from "../components/presenter/useAmbientMotion";
 import { useLive } from "../live/LiveProvider";
 import { useSession } from "../live/useSession";
 
@@ -30,9 +32,21 @@ export function DeckPage() {
 
 export function PresenterPage() {
   const { deckSlug, sessionId } = presenterRoute.useParams();
-  const live = useSession(sessionId);
   const deck = findDeck(deckSlug);
   if (!deck) return <MissingDeck />;
+  if (deck.presentationMode === "standalone") return <Workbench deck={deck} />;
+  return <LivePresenterPage deck={deck} sessionId={sessionId} />;
+}
+
+function LivePresenterPage({
+  deck,
+  sessionId,
+}: {
+  deck: Deck;
+  sessionId: string;
+}) {
+  const deckSlug = deck.slug;
+  const live = useSession(sessionId);
   if (live.isLoading)
     return (
       <main className="empty-page">
@@ -74,9 +88,7 @@ export function PresenterPage() {
         </Link>
       </main>
     );
-  const metadata = deck.slides.map(
-    ({ component: _component, ...meta }) => meta,
-  );
+  const metadata = slideMetadata(deck.slides);
   if (stableContent(metadata) !== stableContent(live.session.slides))
     return (
       <main className="empty-page">
@@ -143,6 +155,8 @@ function Workbench({
   const [actionError, setActionError] = useState("");
   const stage = useRef<HTMLDivElement>(null);
   const { theme, toggleTheme } = useSlideTheme(deck.slug);
+  const motion = useAmbientMotion();
+  const standalone = deck.presentationMode === "standalone";
   const navigate = useNavigate();
   const { createSession } = useLive();
   const activeIndex = live?.session
@@ -238,11 +252,15 @@ function Workbench({
     if (completed) setConfirmEnd(false);
   }
   async function start() {
+    if (standalone) {
+      await fullscreen();
+      return;
+    }
     await performAction(async () => {
       const id = await createSession({
         deckSlug: deck.slug,
         deckTitle: deck.title,
-        slides: deck.slides.map(({ component: _component, ...meta }) => meta),
+        slides: slideMetadata(deck.slides),
       });
       await navigate({
         to: "/present/$deckSlug/$sessionId",
@@ -267,6 +285,7 @@ function Workbench({
     <div className="presenter-shell">
       <PresenterHeader
         isLive={!!live}
+        standalone={standalone}
         ended={ended}
         busy={busy}
         onStart={() => void start()}
@@ -308,8 +327,12 @@ function Workbench({
                 className="slide-stage active-stage"
                 data-slide-theme={theme}
                 data-testid="active-slide"
+                data-motion-enabled={!!slide.ambientMotion}
+                data-motion-state={
+                  slide.ambientMotion && motion.running ? "running" : "paused"
+                }
               >
-                <Component />
+                <Component key={slide.slug} />
               </div>
               {slide.question && (
                 <ProjectedQuestion
@@ -330,6 +353,10 @@ function Workbench({
               focusMode={focusMode}
               isLive={!!live}
               theme={theme}
+              ambientMotion={slide.ambientMotion}
+              motionPaused={motion.paused}
+              reducedMotion={motion.reducedMotion}
+              onToggleMotion={motion.toggle}
               onToggleTheme={toggleTheme}
               onMove={move}
               onFullscreen={() => void fullscreen()}
@@ -356,6 +383,7 @@ function Workbench({
           )}
           <PresenterDetails
             slide={slide}
+            standalone={standalone}
             isLive={!!live}
             busy={busy}
             ended={ended}
@@ -372,7 +400,7 @@ function Workbench({
             }}
             onShare={() => setShare(true)}
           />
-          <ConnectionNotice />
+          {!standalone && <ConnectionNotice />}
         </main>
       </div>
       {share && !focusMode && sessionId && (

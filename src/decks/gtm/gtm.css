@@ -9,8 +9,7 @@
 .gp-roles p { display: flex; justify-content: space-between; gap: 2cqw; border-top: 1px solid var(--slide-border); padding: 1.2cqw 0; font-size: 1.6cqw; }
 .gp-roles p span { color: var(--slide-muted); }
 .gp-roles strong { font-weight: 400; }
-.gp-monogram { position: absolute; right: 5cqw; bottom: 8cqw; font-size: 14cqw; line-height: 1; color: var(--slide-muted); letter-spacing: -.08em; }
-.gp-monogram span { display: block; text-align: right; font-size: 8cqw; color: var(--slide-pink); }
+.gp-speaker-portrait { position: absolute; right: 5cqw; bottom: 7cqw; display: block; width: 32cqw; height: 38cqw; object-fit: cover; object-position: center; }
 .gp-bottom { position: absolute; bottom: 7cqw; font-size: 1.6cqw; color: var(--slide-soft-fg); max-width: 88cqw; }
 .gp-gtm-map { display: grid; grid-template-columns: 1fr 1.12fr 1.12fr; gap: 3cqw; margin-top: 4cqw; }
 .gp-gtm-map section { border-top: 1px solid var(--slide-border); padding-top: 1.3cqw; }

@@ -3,6 +3,7 @@ import type { SlideMeta } from "../../live/types";
 
 type PresenterDetailsProps = {
   slide: SlideMeta;
+  standalone?: boolean;
   isLive: boolean;
   busy: boolean;
   ended: boolean;
@@ -15,24 +16,49 @@ type PresenterDetailsProps = {
 
 export function PresenterDetails(props: PresenterDetailsProps) {
   return (
-    <div className="presenter-details">
-      <SpeakerNotes guide={props.slide.guide} />
-      <InteractionPanel {...props} />
+    <div
+      className={`presenter-details ${props.standalone ? "standalone-details" : ""}`}
+    >
+      <SpeakerNotes
+        guide={props.slide.guide}
+        standalone={props.standalone}
+      />
+      {!props.standalone && <InteractionPanel {...props} />}
     </div>
   );
 }
 
-function SpeakerNotes({ guide }: { guide: SlideMeta["guide"] }) {
+function SpeakerNotes({
+  guide,
+  standalone,
+}: {
+  guide: SlideMeta["guide"];
+  standalone?: boolean;
+}) {
   return (
     <section className="speaker-notes">
       <p className="section-label">
         <NoteBlank size={16} /> GUÍA DE ESTA SLIDE
       </p>
       <h2>{guide.intro}</h2>
-      <p>{guide.takeaway || guide.sections?.[0]?.body}</p>
-      <span className="small muted">
-        El público verá esta guía adaptada a su dispositivo.
-      </span>
+      {standalone ? (
+        <>
+          {guide.sections?.map((section) => (
+            <div className="speaker-guide-section" key={section.title}>
+              <h3>{section.title}</h3>
+              <p>{section.body}</p>
+            </div>
+          ))}
+          {guide.takeaway && <p>{guide.takeaway}</p>}
+        </>
+      ) : (
+        <>
+          <p>{guide.takeaway || guide.sections?.[0]?.body}</p>
+          <span className="small muted">
+            El público verá esta guía adaptada a su dispositivo.
+          </span>
+        </>
+      )}
     </section>
   );
 }

@@ -7,6 +7,7 @@ import {
   Stack,
   Clock,
   Broadcast,
+  Presentation,
 } from "@phosphor-icons/react";
 import { decks } from "../decks";
 import { ShellHeader, ConnectionNotice } from "../components/Shell";
@@ -97,8 +98,12 @@ export function Library() {
                   {featured.duration}
                 </span>
                 <span>
-                  <Broadcast size={16} />
-                  Interactivo
+                  {featured.presentationMode === "standalone"
+                    ? <Presentation size={16} />
+                    : <Broadcast size={16} />}
+                  {featured.presentationMode === "standalone"
+                    ? "Presentación"
+                    : "Interactivo"}
                 </span>
               </div>
             </div>
@@ -152,7 +157,7 @@ export function Library() {
           <div className="search-empty">
             <MagnifyingGlass size={28} />
             <h3>No encontramos ese deck.</h3>
-            <p>Prueba con 101, Engineering, Founders, GTM, Ops o Research.</p>
+            <p>Prueba con Meetup, Founders, Engineering, GTM, Ops o Research.</p>
             <button className="button secondary" onClick={() => setSearch("")}>
               Ver todos los decks
             </button>

@@ -4,13 +4,35 @@ import {
   createRouter,
   Outlet,
   Link,
+  useRouterState,
 } from "@tanstack/react-router";
 import { Library } from "./pages/Library";
 import { DeckPage, PresenterPage } from "./pages/Presenter";
 import { AudiencePage } from "./pages/Audience";
+import { findDeck } from "./decks";
+import { LiveProvider } from "./live/LiveProvider";
+
+function RootLayout() {
+  const deckSlug = useRouterState({
+    select: (state) => {
+      for (const match of state.matches) {
+        if ("deckSlug" in match.params) return match.params.deckSlug;
+      }
+      return undefined;
+    },
+  });
+  const standalone =
+    typeof deckSlug === "string" &&
+    findDeck(deckSlug)?.presentationMode === "standalone";
+  return (
+    <LiveProvider localOnly={standalone}>
+      <Outlet />
+    </LiveProvider>
+  );
+}
 
 const rootRoute = createRootRoute({
-  component: () => <Outlet />,
+  component: RootLayout,
   notFoundComponent: () => (
     <main className="empty-page">
       <h1>Por aquí no hay slides.</h1>

@@ -18,7 +18,7 @@ export function Speaker() {
   return <Frame n={2} label="Un gusto, soy Daniela" className="gp-speaker">
     <h1>Daniela<br/>Huezo<span className="slide-pink">.</span></h1>
     <div className="gp-roles"><p><span>Ai Labs</span><strong>Co-founder</strong></p><p><span>SpaceXAI &amp; ElevenLabs</span><strong>Ambassador</strong></p><p><span>Mi trabajo</span><strong>AI Product Engineer</strong></p></div>
-    <div className="gp-monogram" aria-hidden="true">DH<span>↗</span></div>
+    <img className="gp-speaker-portrait" src={`${import.meta.env.BASE_URL}speakers/daniela-huezo.png`} alt="Retrato de Daniela Huezo" width={1246} height={1263} decoding="async" draggable={false}/>
   </Frame>;
 }
 export function Market() {

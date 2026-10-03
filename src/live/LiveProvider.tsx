@@ -1,43 +1,36 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
-import { createConvexTransport } from "./convex";
-import { createLocalTransport } from "./local";
+import { createLiveTransport } from "./transport";
 import type { LiveTransport } from "./types";
 
 const LiveContext = createContext<LiveTransport | null>(null);
-let cachedTransport: LiveTransport | undefined;
 
-function getTransport(): LiveTransport {
-  if (cachedTransport) return cachedTransport;
-  const requestedNamespace =
-    (import.meta.env.VITE_WORKSPACE_SLUG as string | undefined)?.trim() ||
-    "grok-bot-slides";
-  const validNamespace = /^[a-z0-9][a-z0-9-]{0,79}$/.test(requestedNamespace);
-  const namespace = validNamespace ? requestedNamespace : "grok-bot-slides";
-  const url = (import.meta.env.VITE_CONVEX_URL as string | undefined)?.trim();
-  if (!validNamespace) {
-    cachedTransport = createLocalTransport(
-      namespace,
-      "VITE_WORKSPACE_SLUG no es válido. Usa letras minúsculas, números y guiones. Modo local activo.",
-    );
-  } else if (url) {
-    try {
-      cachedTransport = createConvexTransport(url, namespace);
-    } catch {
-      cachedTransport = createLocalTransport(
-        namespace,
-        "No ha sido configurado Convex. VITE_CONVEX_URL no es válida; modo local activo.",
-      );
-    }
-  } else {
-    cachedTransport = createLocalTransport(namespace);
-  }
-  return cachedTransport;
-}
+export function LiveProvider({
+  children,
+  localOnly = false,
+}: {
+  children: ReactNode;
+  localOnly?: boolean;
+}) {
+  const [connection, setConnection] = useState<{
+    localOnly: boolean;
+    transport: LiveTransport;
+  } | null>(null);
 
-export function LiveProvider({ children }: { children: ReactNode }) {
+  useEffect(() => {
+    const transport = createLiveTransport({
+      localOnly,
+      workspaceSlug: import.meta.env.VITE_WORKSPACE_SLUG,
+      convexUrl: import.meta.env.VITE_CONVEX_URL,
+    });
+    setConnection({ localOnly, transport });
+    return () => transport.close?.();
+  }, [localOnly]);
+
+  // Do not expose the previous route's transport while switching presentation modes.
+  if (!connection || connection.localOnly !== localOnly) return null;
   return (
-    <LiveContext.Provider value={getTransport()}>
+    <LiveContext.Provider value={connection.transport}>
       {children}
     </LiveContext.Provider>
   );
@@ -62,8 +55,4 @@ if (import.meta.hot) {
   // Refresh provider and consumers together when the live transport changes.
   // Session capabilities stay in localStorage, so a reload preserves ownership.
   import.meta.hot.accept(() => window.location.reload());
-  import.meta.hot.dispose(() => {
-    cachedTransport?.close?.();
-    cachedTransport = undefined;
-  });
 }

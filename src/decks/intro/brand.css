@@ -1,0 +1,22 @@
+.meetup-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.meetup-logo img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.meetup-logo .meetup-logo-dark {
+  display: none;
+}
+[data-slide-theme="light"] .meetup-logo--ailabs .meetup-logo-light {
+  display: none;
+}
+[data-slide-theme="light"] .meetup-logo--ailabs .meetup-logo-dark {
+  display: block;
+}
+[data-slide-theme="light"] .meetup-logo--spacexai img {
+  filter: brightness(0);
+}

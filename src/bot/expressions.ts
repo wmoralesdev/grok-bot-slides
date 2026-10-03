@@ -183,3 +183,28 @@ export const EXPRESSION_BY_ID = new Map<string, BotExpression>(
   EXPRESSIONS.map((e) => [e.id, e]),
 );
 export const DEFAULT_EXPRESSION = "neutre";
+
+/** Original bloub interpolation: morph the face parameters before projecting eyes. */
+export function blendExpression(
+  a: BotExpression,
+  b: BotExpression,
+  amount: number,
+): BotExpression {
+  const lerp = (from: number, to: number) => from + (to - from) * amount;
+  const blendEye = (from: EyeCfg, to: EyeCfg): EyeCfg => ({
+    w: lerp(from.w, to.w),
+    h: lerp(from.h, to.h),
+    tilt: lerp(from.tilt ?? 0, to.tilt ?? 0),
+    open: lerp(from.open, to.open),
+  });
+  return {
+    id: b.id,
+    gaze: {
+      yaw: lerp(a.gaze.yaw, b.gaze.yaw),
+      pitch: lerp(a.gaze.pitch, b.gaze.pitch),
+      roll: lerp(a.gaze.roll, b.gaze.roll),
+    },
+    split: lerp(a.split, b.split),
+    eyes: [blendEye(a.eyes[0], b.eyes[0]), blendEye(a.eyes[1], b.eyes[1])],
+  };
+}

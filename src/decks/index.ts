@@ -12,8 +12,8 @@ export type { Deck, SlideDefinition } from "./types";
 // Keep slugs and question IDs stable so a fork can use the same live backend.
 export const decks: Deck[] = [
   introDeck,
-  engineeringDeck,
   foundersDeck,
+  engineeringDeck,
   gtmDeck,
   opsDeck,
   researchDeck,

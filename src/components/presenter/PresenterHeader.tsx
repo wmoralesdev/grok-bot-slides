@@ -4,6 +4,7 @@ import { Brand } from "../Shell";
 
 type PresenterHeaderProps = {
   isLive: boolean;
+  standalone?: boolean;
   ended: boolean;
   busy: boolean;
   onStart: () => void;
@@ -12,6 +13,7 @@ type PresenterHeaderProps = {
 
 export function PresenterHeader({
   isLive,
+  standalone,
   ended,
   busy,
   onStart,
@@ -27,11 +29,13 @@ export function PresenterHeader({
       <div className="presenter-header-end">
         <span className="mode-label">
           <span className={`status-dot ${isLive && !ended ? "green" : ""}`} />
-          {isLive
-            ? ended
-              ? "Sesión finalizada"
-              : "Sesión en vivo"
-            : "Vista previa"}
+          {standalone
+            ? "Presentación"
+            : isLive
+              ? ended
+                ? "Sesión finalizada"
+                : "Sesión en vivo"
+              : "Vista previa"}
         </span>
         {isLive && !ended && (
           <button className="button subtle end-button" onClick={onEnd}>
@@ -42,11 +46,13 @@ export function PresenterHeader({
         {(!isLive || ended) && (
           <button className="button primary" disabled={busy} onClick={onStart}>
             <Play size={17} weight="fill" />
-            {busy
-              ? "Preparando…"
-              : ended
-                ? "Nueva sesión"
-                : "Iniciar presentación"}
+            {standalone
+              ? "Presentar"
+              : busy
+                ? "Preparando…"
+                : ended
+                  ? "Nueva sesión"
+                  : "Iniciar presentación"}
           </button>
         )}
       </div>
